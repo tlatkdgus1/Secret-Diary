@@ -4,8 +4,12 @@ from django.utils import timezone
 from .models import MyUser
 from .models import PublicMemo
 from .models import PrivateMemo
+from django.views.generic.base import TemplateView
 from django.contrib.auth import authenticate, login, logout as _logout
 
+
+class Auth(TemplateView):
+	template_name='myMemo/auth.html'
 
 class SignForm(View):
 	def get(self, request, *args, **kwargs):
@@ -13,19 +17,25 @@ class SignForm(View):
 		return response
 	
 	def post(self, request, *args, **kwargs):
-		user_id = request.POST['user_id']
-		user_pw = request.POST['user_pw']
-		user_email = request.POST['user_email']
+		user_id = request.POST.get('user_id')
+		user_pw = request.POST.get('user_pw')
+		user_pwagain = request.POST.get('user_pwagain')
+		user_email = request.POST.get('user_email')
+
+		if user_pw != user_pwagain:
+			msg = "Password and Password Again is Incorrect"
+			return render(request, 'myMemo/auth.html' , {'msg':msg})
 
 		try:
-			user_model = MyUser.objects.create(username = user_id, email = user_email)
+			user_model = MyUser.objects.create(username=user_id, email=user_email)
 			user_model.set_password(user_pw)
 			user_model.save()
+			msg = "Succese to Make Account"
 		except:
-			error = "This is already a registered ID."
-			return render(request, 'myMemo/signForm.html', {'error':error})
+			msg = "This is already a registered ID."
+			return render(request, 'myMemo/auth.html', {'msg':msg} )
 
-		return render(request, 'myMemo/loginForm.html')
+		return render(request, 'myMemo/auth.html' , {'msg':msg})
 
 class LoginForm(View):
 	def get(self, request, *args, **kwargs):
@@ -33,8 +43,8 @@ class LoginForm(View):
 		return response
 
 	def post(self, request, *args, **kwargs):
-		user_id = request.POST['user_id']
-		user_pw = request.POST['user_pw']
+		user_id = request.POST.get('user_id')
+		user_pw = request.POST.get('user_pw')
 		user = authenticate(username=user_id, password=user_pw)
 		try:
 			publicMemos = PublicMemo.objects.filter(owner=user)
