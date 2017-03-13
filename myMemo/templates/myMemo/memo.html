@@ -7,10 +7,10 @@
 <body>
 
 {% for privateMemo in privateMemos %}
-private;{{ privateMemo.title }};{{ privateMemo.text }};{{privateMemo.time}}<br>
+private;{{ privateMemo.title }};{{ privateMemo.text }}<br>
 {% endfor %}
 {% for publicMemo in publicMemos %}
-public;{{ publicMemo.title }};{{ publicMemo.text }};{{publicMemo.time}}<br>
+public;{{ publicMemo.title }};{{ publicMemo.text }}<br>
 {% endfor %}
 
 </body>

@@ -46,19 +46,13 @@ class LoginForm(View):
 		user_id = request.POST.get('user_id')
 		user_pw = request.POST.get('user_pw')
 		user = authenticate(username=user_id, password=user_pw)
-		try:
-			publicMemos = PublicMemo.objects.filter(owner=user)
-			privateMemos = PrivateMemo.objects.filter(owner=user)
-		except:
-			publicMemos = None
-			privateMemos = None
 
 		if user is not None:
 			login(request, user)
-			return render(request, 'myMemo/index.html', {'user':user, 'publicMemos':publicMemos, 'privateMemos':privateMemos})
+			return render(request, 'myMemo/memo.html')
 		else:	
-			error = "Invalid ID or PW."
-			return render(request, 'myMemo/loginForm.html', {'error':error})
+			msg = "Invalid ID or PW."
+			return render(request, 'myMemo/auth.html', {'msg':msg})
 
 
 def publicMemo(request):
@@ -78,4 +72,20 @@ def privateMemo(request):
 	privateMemo = PrivateMemo(title=title, text=text, time=timezone.now(), owner=user)
 	privateMemo.save()
 	return render(request, 'myMemo/index.html')
+
+def myMemo(request):
+	user = request.user
+	try:
+		publicMemos = PublicMemo.objects.filter(owner=user)
+		privateMemos = PrivateMemo.objects.filter(owner=user)
+	except:
+		publicMemos = None
+		privateMemos = None
+
+	return render(request, 'myMemo/memo.html',{'publicMemos':publicMemos, 'privateMemos':privateMemos})
+
+def randomMemo(request):
+	randomMemo = PublicMemo.objects.order_by('?').first()
+	return render(request, 'myMemo/random.html', {'randomMemo':randomMemo})
+
 

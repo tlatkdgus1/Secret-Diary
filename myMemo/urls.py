@@ -8,6 +8,7 @@ urlpatterns = [
 	url(r'^sign/$', views.SignForm.as_view(), name='signForm'),
 	url(r'^login/$', views.LoginForm.as_view(), name='loginForm'),
 	url(r'^auth/$', views.Auth.as_view(), name='auth'),
-	url(r'^privateMemo/$', views.privateMemo, name='privateMemo'),
+	url(r'^memo/$', views.myMemo, name='myMemo'),
+	url(r'^random/$', views.randomMemo, name='randomMemo'),
 ]
 
