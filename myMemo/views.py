@@ -22,7 +22,7 @@ class SignForm(View):
 		user_pwagain = request.POST.get('user_pwagain')
 		user_email = request.POST.get('user_email')
 
-		if user_pw != user_pwagain:
+		if user_pw is not user_pwagain:
 			msg = "Password and Password Again is Incorrect"
 			return render(request, 'myMemo/auth.html' , {'msg':msg})
 
@@ -72,6 +72,15 @@ def privateMemo(request):
 	privateMemo = PrivateMemo(title=title, text=text, time=timezone.now(), owner=user)
 	privateMemo.save()
 	return render(request, 'myMemo/index.html')
+
+def registerMemo(request):
+	private = request.POST['private']
+
+	if private is "private":
+		privateMemo(request)
+	else:
+		publicMemo(request)
+
 
 def myMemo(request):
 	user = request.user
