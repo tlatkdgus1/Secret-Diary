@@ -7,7 +7,6 @@ from .models import PrivateMemo
 from django.views.generic.base import TemplateView
 from django.contrib.auth import authenticate, login, logout as _logout
 
-
 class Auth(TemplateView):
 	template_name='myMemo/auth.html'
 
@@ -54,32 +53,26 @@ class LoginForm(View):
 			msg = "Invalid ID or PW."
 			return render(request, 'myMemo/auth.html', {'msg':msg})
 
-
-def publicMemo(request):
-	title = request.POST['title']
-	text = request.POST['text']
-	user = request.user
-
-	privateMemo = PrivateMemo(title=title, text=text, time=timezone.now(), owner=user)
-	privateMemo.save()
-	return render(request, 'myMemo/index.html')
-
-def privateMemo(request):
-	title = request.POST['title']
-	text = request.POST['text']
-	user = request.user
-
-	privateMemo = PrivateMemo(title=title, text=text, time=timezone.now(), owner=user)
-	privateMemo.save()
-	return render(request, 'myMemo/index.html')
+def logout(request):
+	_logout(request)
+	return render(request, 'myMemo/auth.html')
 
 def registerMemo(request):
 	private = request.POST['private']
+	title = request.POST['title']
+	text = request.POST['text']
+	user = request.user
 
-	if private is "private":
-		privateMemo(request)
+	if private is "private":	
+		privateMemo = PrivateMemo(title=title, text=text, time=timezone.now(), owner=user)
+		privateMemo.save()
+		return render(request, 'myMemo/index.html')
+
 	else:
-		publicMemo(request)
+		publicMemo = PublicMemo(title=title, text=text, time=timezone.now(), owner=user)
+		publicMemo.save()
+		return render(request, 'myMemo/index.html')
+	
 
 
 def myMemo(request):
